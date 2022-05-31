@@ -10,3 +10,6 @@ Calculates and visualizes the sales of cocktails in the summer of 2021
 
 ### affinityAnalysis.py
 Performs an Affinity Analysis / Market Basket Analysis on the sales data
+
+### dataPrep.py
+Custom module that performs some preperation for the data. The products on the receipts require the most preprocessing.
