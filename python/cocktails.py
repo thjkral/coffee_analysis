@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+import dataPrep
+
 
 os.chdir('/home/tom/ResearchData/Coffee')
 
@@ -28,54 +30,17 @@ Data Wrangling for main sales data
 plt.figure(figsize=(15, 10))
 sns.heatmap(df_w.isna(), cmap='viridis', yticklabels=False, cbar=False)
 plt.title('Missing values before dropping columns', size=20)
-#plt.show()
+plt.show()
 plt.close()
 
-# Drop empty or useless columns and add datetime
-df_w.drop(['Bon soort', 'POS', 'Winkel', 'Naam medewerker', 'Naam klant', 'Klant contacten', 'Status'], axis=1, inplace=True)
-df_w['Datum'] = pd.to_datetime(df_w['Datum'])
-
-def comma_changer(text): # When a product name contains a comma, this function changes it to a colon
-  text = list(text)
-  quote_counter = 0
-  for i,char in enumerate(text):
-    if char == '"':
-      quote_counter+=1
-    elif char == ",":
-      if quote_counter%2 == 1:
-        text[i] = ":"
-  return("".join(text))
-
-
-def extendOrder(order): # Multiply products bought more than once
-    products = order.split(', ')
-    new_list = []
-    
-    for p in products:
-        amount = p.split('x ')[0]
-        amount = int(amount.strip())
-        
-        prod = p.split('x ')[1]
-        
-        #print(f'Prod= {prod}, Amount= {amount}')
-        
-        counter = 1
-        while counter <= amount:
-            new_list.append(prod)
-            counter += 1
-    
-    #return(','.join(new_list))
-    return new_list
-
-
-df_w['Omschrijving'] = df_w['Omschrijving'].apply(lambda x: comma_changer(x))
-df_w['Omschrijving'] = df_w['Omschrijving'].apply(lambda x: extendOrder(x))
+# Do data preperations before analysis
+df_w = dataPrep.prep(df_w)
 
 # Plot missing values after cleaning
 plt.figure(figsize=(10, 15))
 sns.heatmap(df_w.isna(), cmap='viridis', yticklabels=False, cbar=False)
 plt.title('Missing values after dropping columns', size=20)
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -91,7 +56,7 @@ df_i.drop(df_i.columns.difference(['Name', 'Category']), axis=1, inplace=True)
 plt.figure(figsize=(10,15))
 sns.heatmap(df_i.isna(), cmap='viridis', cbar=False, yticklabels=False)
 plt.title('Missing values in category data')
-#plt.show()
+plt.show()
 plt.close()
 
 # Drop missing values
@@ -134,7 +99,7 @@ plot.set_titles(size=15)
 plt.yticks([0, 1, 2, 3])
 plot.fig.suptitle('Verkoop van cocktails\n\n', size=30)
 plot.tight_layout()
-#plot.savefig('/home/tom/Projects/Coffee/plots/cocktail_sales.png')
+plot.savefig('/home/tom/Projects/Coffee/plots/cocktail_sales.png')
 
 
 

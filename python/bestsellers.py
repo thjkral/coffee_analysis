@@ -13,6 +13,8 @@ import seaborn as sns
 import os
 import datetime
 
+import dataPrep
+
 
 start_time  = datetime.datetime.now()
 
@@ -31,53 +33,17 @@ Data Wrangling for main sales data
 plt.figure(figsize=(15, 10))
 sns.heatmap(df_w.isna(), cmap='viridis', yticklabels=False, cbar=False)
 plt.title('Missing values before dropping columns', size=20)
-#plt.show()
+plt.show()
 plt.close()
 
-# Drop empty or useless columns and add datetime
-df_w.drop(['Bon soort', 'POS', 'Winkel', 'Naam medewerker', 'Naam klant', 'Klant contacten', 'Status'], axis=1, inplace=True)
-df_w['Datum'] = pd.to_datetime(df_w['Datum'])
-
-def comma_changer(text): # When a product name contains a comma, this function changes it to a colon
-  text = list(text)
-  quote_counter = 0
-  for i,char in enumerate(text):
-    if char == '"':
-      quote_counter+=1
-    elif char == ",":
-      if quote_counter%2 == 1:
-        text[i] = ":"
-  return("".join(text))
-
-
-def extendOrder(order): # Multiply products bought more than once
-    products = order.split(', ')
-    new_list = []
-    
-    for p in products:
-        amount = p.split('x ')[0]
-        amount = int(amount.strip())
-        
-        prod = p.split('x ')[1]
-        
-        #print(f'Prod= {prod}, Amount= {amount}')
-        
-        counter = 1
-        while counter <= amount:
-            new_list.append(prod)
-            counter += 1
-    
-    #return(','.join(new_list))
-    return new_list
-
-df_w['Omschrijving'] = df_w['Omschrijving'].apply(lambda x: comma_changer(x))
-df_w['Omschrijving'] = df_w['Omschrijving'].apply(lambda x: extendOrder(x))
+# Do data preperations before analysis
+df_w = dataPrep.prep(df_w)
 
 # Plot missing values after cleaning
 plt.figure(figsize=(10, 15))
 sns.heatmap(df_w.isna(), cmap='viridis', yticklabels=False, cbar=False)
 plt.title('Missing values after dropping columns', size=20)
-#plt.show()
+plt.show()
 plt.close()
 
 
@@ -146,15 +112,6 @@ else:
     print('Data is duplicate free')
     
 del df_zi
-
-
-
-
-# Best selling products overall:
-#print(item_counts.sort_values('Count', ascending=False, ignore_index=True).head(5))
-
-
-item_counts
 
 
 # Calculate best selling products per category
